@@ -1,4 +1,20 @@
+import type { Person, Site, Visit, VisitHow } from '@/types/domain';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+
+async function readError(response: Response): Promise<string> {
+  const text = await response.text();
+  try {
+    const json = JSON.parse(text) as {
+      message?: string | string[];
+    };
+    if (Array.isArray(json.message)) return json.message.join(', ');
+    if (typeof json.message === 'string') return json.message;
+  } catch {
+    // not json
+  }
+  return text || `Request failed: ${response.status}`;
+}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
@@ -10,39 +26,42 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Request failed: ${response.status}`);
+    throw new Error(await readError(response));
   }
 
   return response.json() as Promise<T>;
 }
 
 export const api = {
-  health: () => request<{ status: string }>('/health'),
-  getPeople: () => request('/people'),
+  getPeople: () => request<Person[]>('/people'),
+
   getSite: (address: string) =>
-    request(`/sites/${encodeURIComponent(address)}`),
+    request<Site>(`/sites/${encodeURIComponent(address)}`),
+
   searchSites: (q: string) =>
-    request(`/sites/search?q=${encodeURIComponent(q)}`),
+    request<Site[]>(`/sites/search?q=${encodeURIComponent(q)}`),
+
   getHistory: (personId: string) =>
-    request(`/people/${personId}/history`),
+    request<Visit[]>(`/people/${personId}/history`),
+
   publishSite: (body: {
     address: string;
     title: string;
     html: string;
     authorId: string;
   }) =>
-    request('/sites', {
+    request<Site>('/sites', {
       method: 'POST',
       body: JSON.stringify(body),
     }),
+
   recordVisit: (body: {
     personId: string;
     address: string;
-    how: string;
+    how: VisitHow;
     found: boolean;
   }) =>
-    request('/visits', {
+    request<Visit>('/visits', {
       method: 'POST',
       body: JSON.stringify(body),
     }),

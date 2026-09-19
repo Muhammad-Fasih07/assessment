@@ -1,5 +1,5 @@
-import { BrowserShellPlaceholder } from '@/components/browser/BrowserShellPlaceholder';
+import { BrowserApp } from '@/components/browser/BrowserApp';
 
 export default function Home() {
-  return <BrowserShellPlaceholder />;
+  return <BrowserApp />;
 }

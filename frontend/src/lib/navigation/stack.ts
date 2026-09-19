@@ -1,8 +1,10 @@
-// session back/forward stack (not the same as visit history in the db)
+// session back/forward stack (separate from visit history in the db)
 
 export type NavigationEntry = {
   address: string;
   title: string;
+  found: boolean;
+  html: string;
 };
 
 export type NavigationState = {
@@ -21,7 +23,7 @@ export function currentEntry(state: NavigationState): NavigationEntry | null {
   return state.stack[state.index];
 }
 
-// new nav clears anything ahead (same as a real browser)
+// new nav drops anything ahead — same as chrome
 export function navigateTo(
   state: NavigationState,
   entry: NavigationEntry,
@@ -32,16 +34,12 @@ export function navigateTo(
 }
 
 export function goBack(state: NavigationState): NavigationState {
-  if (state.index <= 0) {
-    return state;
-  }
+  if (state.index <= 0) return state;
   return { ...state, index: state.index - 1 };
 }
 
 export function goForward(state: NavigationState): NavigationState {
-  if (state.index >= state.stack.length - 1) {
-    return state;
-  }
+  if (state.index >= state.stack.length - 1) return state;
   return { ...state, index: state.index + 1 };
 }
 

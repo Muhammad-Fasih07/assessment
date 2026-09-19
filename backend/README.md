@@ -1,8 +1,9 @@
 # api
 
-cd backend
+```bash
 npm install
 npm run start:dev
-
-# seed
 npm run seed
+```
+
+Runs on http://localhost:3001
