@@ -11,16 +11,15 @@ Need Node and Mongo running locally.
 ```bash
 # api
 cd backend
-cp .env.example .env
 npm install
 npm run start:dev
 
-# seed (once api deps are in)
+# seed (resets people/sites/visits, safe to run twice)
+cd backend
 npm run seed
 
 # ui
 cd frontend
-cp .env.example .env.local
 npm install
 npm run dev
 ```

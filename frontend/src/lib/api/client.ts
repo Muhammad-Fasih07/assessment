@@ -26,6 +26,26 @@ export const api = {
     request(`/sites/search?q=${encodeURIComponent(q)}`),
   getHistory: (personId: string) =>
     request(`/people/${personId}/history`),
+  publishSite: (body: {
+    address: string;
+    title: string;
+    html: string;
+    authorId: string;
+  }) =>
+    request('/sites', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  recordVisit: (body: {
+    personId: string;
+    address: string;
+    how: string;
+    found: boolean;
+  }) =>
+    request('/visits', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
 };
 
 export { API_URL };

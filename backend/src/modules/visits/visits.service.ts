@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Visit, VisitDocument, VisitHow } from './schemas/visit.schema';
 
 export type CreateVisitInput = {
@@ -20,7 +20,7 @@ export class VisitsService {
 
   create(input: CreateVisitInput) {
     return this.visitModel.create({
-      personId: input.personId,
+      personId: new Types.ObjectId(input.personId),
       address: input.address.toLowerCase().trim(),
       how: input.how,
       found: input.found,
@@ -30,7 +30,7 @@ export class VisitsService {
 
   findHistoryForPerson(personId: string, limit = 100) {
     return this.visitModel
-      .find({ personId })
+      .find({ personId: new Types.ObjectId(personId) })
       .sort({ visitedAt: -1 })
       .limit(limit)
       .lean()
